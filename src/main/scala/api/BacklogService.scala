@@ -1,5 +1,6 @@
 package api
 
+import common.{CommonService, ConfigService}
 import io.circe.generic.auto._
 import io.circe.parser.decode
 import models.RetrieveBacklogIssueModel
@@ -7,7 +8,7 @@ import models.RetrieveBacklogProjectModel
 import scalaj.http.Http
 
 // 呼出元から参照できるメソッドを制限したいのでServiceをtraitで宣言してImplでextendsする
-trait BacklogService extends CommonService {
+trait BacklogService extends CommonService with ConfigService {
   def retrieveProject(): Int
   def retrieveIssues(projectId: Int): List[RetrieveBacklogIssueModel]
 }
@@ -15,8 +16,8 @@ trait BacklogService extends CommonService {
 class BacklogServiceImpl extends BacklogService {
 
   // BacklogAPIを使用するのに必要なデータを取得
-  val BACKLOG_API_KEY: String = line(0).split("=")(1)
-  val BACKLOG_BASE_URL: String = line(1).split("=")(1)
+  val BACKLOG_API_KEY: String = splitResource(line(0))
+  val BACKLOG_BASE_URL: String = splitResource(line(1))
 
   // プロジェクト一覧の取得
   override def retrieveProject(): Int = {

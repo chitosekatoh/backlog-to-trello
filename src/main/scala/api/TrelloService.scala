@@ -1,11 +1,12 @@
 package api
 
+import common.{CommonService, ConfigService}
 import io.circe.generic.auto._
 import io.circe.parser.{decode, parse}
 import models.{RetrieveBacklogIssueModel, RetrieveTrelloBoardModel, RetrieveTrelloListModel}
 import scalaj.http.{Http, HttpResponse}
 
-trait TrelloService extends CommonService {
+trait TrelloService extends CommonService with ConfigService {
   def retrieveBoard(): String
   def retrieveList(boardId: String): String
   def createCards(listId: String, issueList: List[RetrieveBacklogIssueModel])
@@ -13,10 +14,10 @@ trait TrelloService extends CommonService {
 
 class TrelloServiceImpl extends TrelloService {
 
-  val TRELLO_KEY: String = line(2).split("=")(1)
-  val TRELLO_TOKEN: String = line(3).split("=")(1)
-  val TRELLO_BASE_URL: String = line(4).split("=")(1)
-  val TRELLO_USER_ID: String = line(5).split("=")(1)
+  val TRELLO_KEY: String = splitResource(line(2))
+  val TRELLO_TOKEN: String = splitResource(line(3))
+  val TRELLO_BASE_URL: String = splitResource(line(4))
+  val TRELLO_USER_ID: String = splitResource(line(5))
 
   // TrelloからBoard一覧を取得
   override def retrieveBoard(): String = {
