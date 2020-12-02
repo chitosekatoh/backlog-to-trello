@@ -5,7 +5,7 @@ import com.typesafe.config.ConfigFactory
 
 trait ConfigService {
   // application.confを読込
-  val message = ConfigFactory.load()
+  val applicationConf = ConfigFactory.load()
 
   // リソースファイルから取得した値を分割する
   def splitResource(resourceData: String): String = {
@@ -19,31 +19,31 @@ trait ConfigService {
   // リソースファイルから取得した値のnullチェック
   def isNull(resourceData: String): String = Option(resourceData) match {
     case Some(data) => data
-    case None => message.getString("error.notExistResourceData")
+    case None => applicationConf.getString("error.NOT_EXIST_RESOURCE_DATA")
   }
 
   def resourceCheck(resourceData: String): Either[String, String] = {
     val data = isNull(resourceData)
 
-    if(data.equals(message.getString("error.notExistResourceData"))) {
+    if(data.equals(applicationConf.getString("error.NOT_EXIST_RESOURCE_DATA"))) {
       // リソースファイルから取得した値が存在しない場合
-      Left(message.getString("error.notExistResourceData"))
+      Left(applicationConf.getString("error.NOT_EXIST_RESOURCE_DATA"))
 
     } else if(data.isEmpty){
       // リソースファイルから取得した値が空の場合
-      Left(message.getString("error.emptyAPIKeyAndValue"))
+      Left(applicationConf.getString("error.EMPTY_API_KEY_AND_VALUE"))
 
     } else if(!data.contains("=")){
       // リソースファイルから取得した値に「=」が含まれていない場合
-      Left(message.getString("error.notContainEqual"))
+      Left(applicationConf.getString("error.NOT_CONTAIN_EQUAL"))
 
     } else if(data.endsWith("=")) {
       // リソースファイルから取得した値が「X=」の形の場合
-      Left(data.split("=")(0) + message.getString("error.emptyAPIValue"))
+      Left(data.split("=")(0) + applicationConf.getString("error.EMPTY_API_VALUE"))
 
     } else if(data.startsWith("=")) {
       // リソースファイルから取得した値が「=Y」の形の場合
-      Left(message.getString("error.emptyAPIKey"))
+      Left(applicationConf.getString("error.EMPTY_API_KEY"))
 
     } else {
       // リソースファイルから取得した値が「X=Y」の場合
