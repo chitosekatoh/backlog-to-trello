@@ -8,7 +8,7 @@ import models.RetrieveBacklogProjectModel
 import scalaj.http.Http
 
 // 呼出元から参照できるメソッドを制限したいのでServiceをtraitで宣言してImplでextendsする
-trait BacklogService extends CommonService with ConfigService {
+trait BacklogService extends CommonService {
   def retrieveProject(): Int
   def retrieveIssues(projectId: Int): List[RetrieveBacklogIssueModel]
 }
@@ -16,8 +16,8 @@ trait BacklogService extends CommonService with ConfigService {
 class BacklogServiceImpl extends BacklogService {
 
   // BacklogAPIを使用するのに必要なデータを取得
-  val BACKLOG_API_KEY: String = splitResource(line(0))
-  val BACKLOG_BASE_URL: String = splitResource(line(1))
+  val BACKLOG_API_KEY = retrieveAPIKey("BACKLOG_API_KEY")
+  val BACKLOG_BASE_URL = retrieveAPIKey("BACKLOG_BASE_URL")
 
   // プロジェクト一覧の取得
   override def retrieveProject(): Int = {

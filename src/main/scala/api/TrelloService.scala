@@ -6,7 +6,7 @@ import io.circe.parser.{decode, parse}
 import models.{RetrieveBacklogIssueModel, RetrieveTrelloBoardModel, RetrieveTrelloListModel}
 import scalaj.http.{Http, HttpResponse}
 
-trait TrelloService extends CommonService with ConfigService {
+trait TrelloService extends CommonService {
   def retrieveBoard(): String
   def retrieveList(boardId: String): String
   def createCards(listId: String, issueList: List[RetrieveBacklogIssueModel])
@@ -14,10 +14,10 @@ trait TrelloService extends CommonService with ConfigService {
 
 class TrelloServiceImpl extends TrelloService {
 
-  val TRELLO_KEY: String = splitResource(line(2))
-  val TRELLO_TOKEN: String = splitResource(line(3))
-  val TRELLO_BASE_URL: String = splitResource(line(4))
-  val TRELLO_USER_ID: String = splitResource(line(5))
+  val TRELLO_KEY = retrieveAPIKey("TRELLO_KEY")
+  val TRELLO_TOKEN = retrieveAPIKey("TRELLO_TOKEN")
+  val TRELLO_BASE_URL = retrieveAPIKey("TRELLO_BASE_URL")
+  val TRELLO_USER_ID = retrieveAPIKey("TRELLO_USER_ID")
 
   // TrelloからBoard一覧を取得
   override def retrieveBoard(): String = {
@@ -78,6 +78,7 @@ class TrelloServiceImpl extends TrelloService {
 
     val request = TRELLO_BASE_URL + "/cards"
 
+/*
     issueData.foreach(value => {
       val response = Http(request)
           .postForm(Seq("key" -> TRELLO_KEY, "token" -> TRELLO_TOKEN, "idList" -> listId, "name" -> value.summary, "desc" -> "Backlogからの登録")).asString
@@ -87,6 +88,7 @@ class TrelloServiceImpl extends TrelloService {
       }
       println("Trello:課題「" + value.summary + "」を追加しました。")
     })
+*/
   }
 
 }

@@ -1,27 +1,34 @@
 package common
 
+import com.typesafe.config.ConfigFactory
 import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.should
 
-class CommonServiceSpec extends AnyFlatSpec with should.Matchers  {
+class CommonServiceSpec extends AnyFlatSpec {
+
+  // application.confを読込
+  val applicationConf = ConfigFactory.load()
 
   val commonService = new CommonServiceForUnitTest()
 
-  "CommonService.existenceCheck" should "存在するパスの場合Some型でパス名を返却する" in {
-    val checkData: String  = "src\\main\\resources\\resources.txt"
-    val testCase = commonService.existenceCheck(checkData)
-    assert(testCase===Some(checkData))
+  "CommonService.retrieveAPIKey" should "applicationConf.APIConfigにAPI設定値が存在する場合" in {
+    val checkData: String  = "BACKLOG_API_KEY"
+    val testCase = commonService.retrieveAPIKey(checkData)
+    assert(testCase===applicationConf.getString("APIConfig."+checkData))
   }
 
-  "CommonService.existenceCheck" should "存在しないパスの場合Noneを返却する" in {
-    val checkData: String  = "src\\main\\resources\\notexistence.txt"
-    val testCase = commonService.existenceCheck(checkData)
-    assert(testCase===None)
+  "CommonService.retrieveAPIKey" should "applicationConf.APIConfigにAPI設定値が存在しない場合" in {
+    val checkData: String  = "BACKLOG_BASE_URL"
+    val testCase = commonService.retrieveAPIKey(checkData)
+    println(testCase)
+    assert(testCase===sys.error(checkData+applicationConf.getString("error.EMPTY_API_VALUE")))
   }
 
-  "CommonService.existenceCheck" should "パスがブランクの場合Noneを返却する" in {
-    val checkData: String  = ""
-    val testCase = commonService.existenceCheck(checkData)
-    assert(testCase===None)
+/*
+  "CommonService.retrieveAPIKey" should "applicationConf.APIConfigにAPIキーが存在しない場合" in {
+    val checkData: String  = "NOT_EXIST_API_KEY"
+    val testCase = commonService.retrieveAPIKey(checkData)
+    assert(testCase===null)
   }
+*/
+
 }
