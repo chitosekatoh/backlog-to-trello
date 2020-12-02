@@ -2,9 +2,9 @@
 Backlogの課題一覧をTrelloへ反映させるプログラムです
 
 ### 起動前準備
-以下にAPIリクエストに必要な設定値を書き込みます
+以下のAPIConfigにAPIリクエストに必要な設定値を書き込みます
 
-/src/main/resources/resources.txt  
+/src/main/resources/application.conf  
 
 必要な設定値 
 - Backlog
@@ -16,7 +16,6 @@ Backlogの課題一覧をTrelloへ反映させるプログラムです
   - APIリクエスト先URL(TRELLO_BASE_URL)
   - ユーザID(TRELLO_USER_ID)
 
-全ての設定値に引用符は不要です  
 URLの末尾にスラッシュは不要です
 
 ### 起動方法
