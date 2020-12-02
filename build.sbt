@@ -18,3 +18,4 @@ libraryDependencies ++= Seq(
 ).map(_ % circeVersion)
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.2" % Test
+libraryDependencies += "com.typesafe" % "config" % "1.3.1"

@@ -1,9 +1,11 @@
 package common
 
-trait ConfigService {
+import com.typesafe.config.ConfigFactory
 
-  // リソースファイルから取得した値が存在しない場合のエラーメッセージを定義
-  val notExistResourceData = "リソースファイルから取得した値が存在しません。"
+
+trait ConfigService {
+  // application.confを読込
+  val message = ConfigFactory.load()
 
   // リソースファイルから取得した値を分割する
   def splitResource(resourceData: String): String = {
@@ -17,27 +19,32 @@ trait ConfigService {
   // リソースファイルから取得した値のnullチェック
   def isNull(resourceData: String): String = Option(resourceData) match {
     case Some(data) => data
-    case None => notExistResourceData
+    case None => message.getString("error.notExistResourceData")
   }
 
   def resourceCheck(resourceData: String): Either[String, String] = {
     val data = isNull(resourceData)
 
-    if(data.equals(notExistResourceData)) {
+    if(data.equals(message.getString("error.notExistResourceData"))) {
       // リソースファイルから取得した値が存在しない場合
-      Left(notExistResourceData)
+      Left(message.getString("error.notExistResourceData"))
+
     } else if(data.isEmpty){
       // リソースファイルから取得した値が空の場合
-      Left("設定値が空です。")
+      Left(message.getString("error.emptyAPIKeyAndValue"))
+
     } else if(!data.contains("=")){
       // リソースファイルから取得した値に「=」が含まれていない場合
-      Left("「=」が設定されていません。")
+      Left(message.getString("error.notContainEqual"))
+
     } else if(data.endsWith("=")) {
       // リソースファイルから取得した値が「X=」の形の場合
-      Left(data.split("=")(0) + "の値が設定されていません。")
+      Left(data.split("=")(0) + message.getString("error.emptyAPIValue"))
+
     } else if(data.startsWith("=")) {
       // リソースファイルから取得した値が「=Y」の形の場合
-      Left("APIのキー名が設定されていません。")
+      Left(message.getString("error.emptyAPIKey"))
+
     } else {
       // リソースファイルから取得した値が「X=Y」の場合
       Right(data.split("=")(1))
