@@ -13,7 +13,7 @@ trait CommonService {
 
     checkedData match {
       case Some(data) => data
-      case None => sys.error(data)
+      case None =>  data + applicationConf.getString("error.EMPTY_API_VALUE")
     }
   }
 
