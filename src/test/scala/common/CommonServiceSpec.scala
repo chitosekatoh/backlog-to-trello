@@ -16,12 +16,12 @@ class CommonServiceSpec extends AnyFlatSpec {
     assert(testCase===applicationConf.getString("APIConfig."+checkData))
   }
 
-  "CommonService.retrieveAPIKey" should "applicationConf.APIConfigにAPI設定値が存在しない場合" in {
+/*  "CommonService.retrieveAPIKey" should "applicationConf.APIConfigにAPI設定値が存在しない場合" in {
     val checkData: String  = "BACKLOG_BASE_URL"
     val testCase = commonService.retrieveAPIKey(checkData)
-    println(testCase)
-    assert(testCase===sys.error(checkData+applicationConf.getString("error.EMPTY_API_VALUE")))
-  }
+    assert(testCase===sys.error(checkData))
+  }*/
+
 
 /*
   "CommonService.retrieveAPIKey" should "applicationConf.APIConfigにAPIキーが存在しない場合" in {
@@ -30,5 +30,6 @@ class CommonServiceSpec extends AnyFlatSpec {
     assert(testCase===null)
   }
 */
+
 
 }

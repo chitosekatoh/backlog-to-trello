@@ -9,23 +9,21 @@ trait CommonService {
 
    // application.confからAPI情報を取得する
   def retrieveAPIKey(data: String): String = {
-    val checkedData = isEmptyAPILey(data)
+    val checkedData = isEmptyAPIKey(data)
+
     checkedData match {
-      case Right(data) => data
-      case Left(data) => sys.error(data)
+      case Some(data) => data
+      case None => sys.error(data)
     }
   }
 
-  def isEmptyAPILey(data: String): Either[String, String] = {
+  def isEmptyAPIKey(data: String): Option[String] = {
     val apiValue = applicationConf.getString("APIConfig."+data)
 
-    if(apiValue.isEmpty){
-      // API設定値が空の場合
-      Left(data+applicationConf.getString("error.EMPTY_API_VALUE"))
-    } else {
-      // API設定が空ではない場合
-      Right(apiValue)
-    }
+    // API設定値が空の場合
+    if(apiValue.isEmpty) None
+    // API設定値が空ではない場合
+    else Some(apiValue)
   }
 }
 
