@@ -1,6 +1,6 @@
 package api
 
-import common.{CommonService, ConfigService}
+import common.CommonService
 import io.circe.generic.auto._
 import io.circe.parser.decode
 import models.RetrieveBacklogIssueModel
@@ -34,16 +34,14 @@ class BacklogServiceImpl extends BacklogService {
     parsedProject.map(value => value.id)(0)
 
   }
+
   // retrieveIssuesのレスポンスをモデルクラスへ出力
   def parseToProject(jsonString: String): List[RetrieveBacklogProjectModel] = {
 
     val decodedProject =  decode[List[RetrieveBacklogProjectModel]](jsonString)
     decodedProject match {
-      case Right(backlogProject) =>
-        return backlogProject
-
-      case Left(error) =>
-        throw new RuntimeException(error)
+      case Right(backlogProject) => backlogProject
+      case Left(error) => throw new RuntimeException(error)
     }
   }
 
@@ -67,11 +65,8 @@ class BacklogServiceImpl extends BacklogService {
 
     val decodedIssues =  decode[List[RetrieveBacklogIssueModel]](jsonString)
     decodedIssues match {
-      case Right(backlogTickets) =>
-        return backlogTickets
-
-      case Left(error) =>
-        throw new RuntimeException(error)
+      case Right(backlogTickets) => backlogTickets
+      case Left(error) => throw new RuntimeException(error)
     }
   }
 }

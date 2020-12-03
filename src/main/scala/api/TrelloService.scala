@@ -1,6 +1,6 @@
 package api
 
-import common.{CommonService, ConfigService}
+import common.CommonService
 import io.circe.generic.auto._
 import io.circe.parser.{decode, parse}
 import models.{RetrieveBacklogIssueModel, RetrieveTrelloBoardModel, RetrieveTrelloListModel}
@@ -74,11 +74,10 @@ class TrelloServiceImpl extends TrelloService {
     }
   }
 
-  override def createCards(listId: String, issueData: List[RetrieveBacklogIssueModel]) = {
+  override def createCards(listId: String, issueData: List[RetrieveBacklogIssueModel]): Unit = {
 
     val request = TRELLO_BASE_URL + "/cards"
 
-/*
     issueData.foreach(value => {
       val response = Http(request)
           .postForm(Seq("key" -> TRELLO_KEY, "token" -> TRELLO_TOKEN, "idList" -> listId, "name" -> value.summary, "desc" -> "Backlogからの登録")).asString
@@ -88,7 +87,5 @@ class TrelloServiceImpl extends TrelloService {
       }
       println("Trello:課題「" + value.summary + "」を追加しました。")
     })
-*/
   }
-
 }
