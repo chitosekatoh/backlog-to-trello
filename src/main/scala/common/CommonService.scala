@@ -2,7 +2,6 @@ package common
 
 import com.typesafe.config.ConfigFactory
 
-// 各種サービスのAPIキーを一度だけ呼び出したいためtraitを使用
 trait CommonService {
   // application.confを読込
   val applicationConf = ConfigFactory.load()
@@ -17,6 +16,7 @@ trait CommonService {
     }
   }
 
+  // API設定値の空チェック
   def isEmptyAPIKey(data: String): Option[String] = {
     val apiValue = applicationConf.getString("APIConfig."+data)
 

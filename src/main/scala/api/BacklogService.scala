@@ -7,7 +7,6 @@ import models.RetrieveBacklogIssueModel
 import models.RetrieveBacklogProjectModel
 import scalaj.http.Http
 
-// 呼出元から参照できるメソッドを制限したいのでServiceをtraitで宣言してImplでextendsする
 trait BacklogService extends CommonService {
   def retrieveProject(): Int
   def retrieveIssues(projectId: Int): List[RetrieveBacklogIssueModel]
