@@ -15,8 +15,8 @@ trait BacklogService extends CommonService {
 class BacklogServiceImpl extends BacklogService {
 
   // BacklogAPIを使用するのに必要なデータを取得
-  val BACKLOG_API_KEY = retrieveAPIKey("BACKLOG_API_KEY")
-  val BACKLOG_BASE_URL = retrieveAPIKey("BACKLOG_BASE_URL")
+  val BACKLOG_API_KEY = retrieveAPIValue("BACKLOG_API_KEY")
+  val BACKLOG_BASE_URL = retrieveAPIValue("BACKLOG_BASE_URL")
 
   // プロジェクト一覧の取得
   override def retrieveProject(): Int = {

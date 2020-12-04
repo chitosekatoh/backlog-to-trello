@@ -7,26 +7,10 @@ trait CommonService {
   val applicationConf = ConfigFactory.load()
 
    // application.confからAPI情報を取得する
-  def retrieveAPIKey(data: String): String = {
-    val checkedData = isEmptyAPIKey(data)
+  def retrieveAPIValue(data: String): String = {
+    val checkedData = applicationConf.getString("APIConfig."+data)
 
-    checkedData match {
-      case Some(data) => data
-      case None =>  data + applicationConf.getString("error.EMPTY_API_VALUE")
-    }
+    if(!checkedData.isEmpty) checkedData
+    else sys.error(data + applicationConf.getString("error.EMPTY_API_VALUE"))
   }
-
-  // API設定値の空チェック
-  def isEmptyAPIKey(data: String): Option[String] = {
-    val apiValue = applicationConf.getString("APIConfig."+data)
-
-    // API設定値が空の場合
-    if(apiValue.isEmpty) None
-    // API設定値が空ではない場合
-    else Some(apiValue)
-  }
-}
-
-class CommonServiceForUnitTest extends CommonService {
-  override def retrieveAPIKey(data: String): String = super.retrieveAPIKey(data)
 }

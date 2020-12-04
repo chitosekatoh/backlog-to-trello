@@ -14,10 +14,10 @@ trait TrelloService extends CommonService {
 
 class TrelloServiceImpl extends TrelloService {
 
-  val TRELLO_KEY = retrieveAPIKey("TRELLO_KEY")
-  val TRELLO_TOKEN = retrieveAPIKey("TRELLO_TOKEN")
-  val TRELLO_BASE_URL = retrieveAPIKey("TRELLO_BASE_URL")
-  val TRELLO_USER_ID = retrieveAPIKey("TRELLO_USER_ID")
+  val TRELLO_KEY = retrieveAPIValue("TRELLO_KEY")
+  val TRELLO_TOKEN = retrieveAPIValue("TRELLO_TOKEN")
+  val TRELLO_BASE_URL = retrieveAPIValue("TRELLO_BASE_URL")
+  val TRELLO_USER_ID = retrieveAPIValue("TRELLO_USER_ID")
 
   // TrelloからBoard一覧を取得
   override def retrieveBoard(): String = {

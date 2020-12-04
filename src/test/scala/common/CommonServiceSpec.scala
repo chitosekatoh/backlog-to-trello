@@ -1,10 +1,14 @@
 package common
 
-import com.typesafe.config.ConfigFactory
+import com.typesafe.config.{ConfigException, ConfigFactory}
 import org.scalatest._
 import org.scalatest.flatspec.AnyFlatSpec
 
-@Ignore
+
+class CommonServiceForUnitTest extends CommonService {
+  override def retrieveAPIValue(data: String): String = super.retrieveAPIValue(data)
+}
+
 class CommonServiceSpec extends AnyFlatSpec {
 
   // application.confを読込
@@ -12,25 +16,25 @@ class CommonServiceSpec extends AnyFlatSpec {
 
   val commonService = new CommonServiceForUnitTest()
 
-  "CommonService.retrieveAPIKey" should "applicationConf.APIConfigにAPI設定値が存在する場合" in {
-    val checkData: String  = "BACKLOG_API_KEY"
-    val testCase = commonService.retrieveAPIKey(checkData)
-    assert(testCase===applicationConf.getString("APIConfig."+checkData))
+  "CommonService.retrieveAPIKey" should "applicationConf.APIConfigのAPI設定値が空ではない場合" in {
+    val checkDataList: List[String] = List(
+      "BACKLOG_API_KEY",
+      "BACKLOG_BASE_URL",
+      "TRELLO_KEY",
+      "TRELLO_TOKEN",
+      "TRELLO_BASE_URL",
+      "TRELLO_USER_ID"
+    )
+
+    checkDataList
+      .map(value => commonService.retrieveAPIValue(value))
+      .foreach(result => assert(result!=""))
   }
 
-  "CommonService.retrieveAPIKey" should "applicationConf.APIConfigにAPI設定値が存在しない場合" in {
-    val checkData: String  = "BACKLOG_BASE_URL"
-    val testCase = commonService.retrieveAPIKey(checkData)
-    assert(testCase===checkData + applicationConf.getString("error.EMPTY_API_VALUE"))
-  }
-
-/*
   "CommonService.retrieveAPIKey" should "applicationConf.APIConfigにAPIキーが存在しない場合" in {
-    val checkData: String  = "NOT_EXIST_API_KEY"
-    val testCase = commonService.retrieveAPIKey(checkData)
-    assert(testCase===null)
+    val checkData: String = "NOT_EXIST_API_KEY"
+    assertThrows[ConfigException] {
+      commonService.retrieveAPIValue(checkData)
+    }
   }
-*/
-
-
 }
