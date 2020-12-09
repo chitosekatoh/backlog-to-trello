@@ -3,13 +3,14 @@ package api
 import common.CommonService
 import io.circe.generic.auto._
 import io.circe.parser.{decode, parse}
-import models.{RetrieveBacklogIssueModel, RetrieveTrelloBoardModel, RetrieveTrelloListModel}
+import models.{BacklogIssueModel, TrelloBoardModel, TrelloListModel, TrelloModel}
 import scalaj.http.{Http, HttpResponse}
+import models.DecodeTrelloModel._
 
 trait TrelloService extends CommonService {
   def retrieveBoard(): String
   def retrieveList(boardId: String): String
-  def createCards(listId: String, issueList: List[RetrieveBacklogIssueModel])
+  def createCards(listId: String, issueList: List[BacklogIssueModel])
 }
 
 class TrelloServiceImpl extends TrelloService {
@@ -29,15 +30,14 @@ class TrelloServiceImpl extends TrelloService {
     }
 
     val parsedBoard = parseToBoard(response.body)
-    println("Trello:ボード名「" + parsedBoard.map(value => value.name)(0) + "」からリストを取得します。")
-
+    println("Trello:ボード名「" + parsedBoard.map(value => value.name) + "」からリストを取得します。")
     // 取得したBoard一覧をparseして配列の最初のデータのみ取得
     parsedBoard.map(value => value.id)(0)
 
   }
-  def parseToBoard(jsonString: String): List[RetrieveTrelloBoardModel] = {
+  def parseToBoard(jsonString: String): List[TrelloBoardModel] = {
 
-    val decodedBoard = decode[List[RetrieveTrelloBoardModel]](jsonString)
+    val decodedBoard = decode[List[TrelloBoardModel]](jsonString)
     decodedBoard match {
       case Right(trelloBoard) =>
         return trelloBoard
@@ -61,9 +61,9 @@ class TrelloServiceImpl extends TrelloService {
     parsedList.map(value => value.id)(0)
   }
 
-  def parseToList(jsonString: String): List[RetrieveTrelloListModel] = {
+  def parseToList(jsonString: String): List[TrelloListModel] = {
 
-    val decodedBoard = decode[List[RetrieveTrelloListModel]](jsonString)
+    val decodedBoard = decode[List[TrelloListModel]](jsonString)
     decodedBoard match {
       case Right(trelloList) =>
         return trelloList
@@ -74,7 +74,7 @@ class TrelloServiceImpl extends TrelloService {
     }
   }
 
-  override def createCards(listId: String, issueData: List[RetrieveBacklogIssueModel]): Unit = {
+  override def createCards(listId: String, issueData: List[BacklogIssueModel]): Unit = {
 
     val request = TRELLO_BASE_URL + "/cards"
 
@@ -87,5 +87,13 @@ class TrelloServiceImpl extends TrelloService {
       }
       println("Trello:課題「" + value.summary + "」を追加しました。")
     })
+  }
+
+  // JSONをパースしてcase classに落とし込む
+  def parseToTrelloModel(jsonString: String): List[TrelloModel] = {
+    decode[TrelloModel](jsonString) match {
+      case Right(decodedList) => List[TrelloModel](decodedList)
+      case Left(error) => throw new RuntimeException(error)
+    }
   }
 }

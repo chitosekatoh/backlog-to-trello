@@ -3,13 +3,13 @@ package api
 import common.CommonService
 import io.circe.generic.auto._
 import io.circe.parser.decode
-import models.RetrieveBacklogIssueModel
-import models.RetrieveBacklogProjectModel
+import models.{BacklogModel, BacklogIssueModel, BacklogProjectModel}
 import scalaj.http.Http
+import models.DecodeBacklogModel._
 
 trait BacklogService extends CommonService {
   def retrieveProject(): Int
-  def retrieveIssues(projectId: Int): List[RetrieveBacklogIssueModel]
+  def retrieveIssues(projectId: Int): List[BacklogIssueModel]
 }
 
 class BacklogServiceImpl extends BacklogService {
@@ -29,15 +29,16 @@ class BacklogServiceImpl extends BacklogService {
     }
 
     val parsedProject = parseToProject(response.body)
+
     println("Backlog:プロジェクト名「" + parsedProject.map(value => value.name)(0) + "」から課題を取得します。")
     parsedProject.map(value => value.id)(0)
 
   }
 
   // retrieveIssuesのレスポンスをモデルクラスへ出力
-  def parseToProject(jsonString: String): List[RetrieveBacklogProjectModel] = {
+  def parseToProject(jsonString: String): List[BacklogProjectModel] = {
 
-    val decodedProject =  decode[List[RetrieveBacklogProjectModel]](jsonString)
+    val decodedProject =  decode[List[BacklogProjectModel]](jsonString)
     decodedProject match {
       case Right(backlogProject) => backlogProject
       case Left(error) => throw new RuntimeException(error)
@@ -45,7 +46,7 @@ class BacklogServiceImpl extends BacklogService {
   }
 
   // 課題一覧の取得
-  override def retrieveIssues(projectId: Int): List[RetrieveBacklogIssueModel]= {
+  override def retrieveIssues(projectId: Int): List[BacklogIssueModel]= {
 
     val request = BACKLOG_BASE_URL + "/api/v2/issues" + "?" + "apiKey=" + BACKLOG_API_KEY + "&" + "projectId[]=" + projectId
     val response = Http(request).asString
@@ -60,12 +61,21 @@ class BacklogServiceImpl extends BacklogService {
   }
 
   // retrieveIssuesのレスポンスをモデルクラスへ出力
-  def parseToIssues(jsonString: String): List[RetrieveBacklogIssueModel] = {
+  def parseToIssues(jsonString: String): List[BacklogIssueModel] = {
 
-    val decodedIssues =  decode[List[RetrieveBacklogIssueModel]](jsonString)
+    val decodedIssues =  decode[List[BacklogIssueModel]](jsonString)
     decodedIssues match {
       case Right(backlogTickets) => backlogTickets
       case Left(error) => throw new RuntimeException(error)
     }
   }
+
+  // JSONをパースしてcase classに落とし込む
+  def parseToBacklogModel(jsonString: String): List[BacklogModel] = {
+    decode[BacklogModel](jsonString) match {
+      case Right(decodedList) => List[BacklogModel](decodedList)
+      case Left(error) => throw new RuntimeException(error)
+    }
+  }
 }
+
